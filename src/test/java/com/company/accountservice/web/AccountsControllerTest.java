@@ -22,9 +22,9 @@ import static com.company.accountservice.utils.IntegerUtils.randomInteger;
 import static com.company.accountservice.utils.StringUtils.randomString;
 import static java.util.Collections.emptyList;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpHeaders.LOCATION;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
@@ -91,5 +91,15 @@ public class AccountsControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(header().string(LOCATION, "/accounts/" + accountWithId.getId()));
+    }
+
+    @Test
+    public void shouldDeleteAnAccount() throws Exception {
+        Integer accountId = randomInteger();
+
+        mockMvc.perform(delete("/accounts/" + accountId))
+                .andExpect(status().isNoContent());
+
+        verify(accountService).deleteAccount(accountId);
     }
 }

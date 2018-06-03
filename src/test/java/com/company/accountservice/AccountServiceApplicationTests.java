@@ -88,7 +88,17 @@ public class AccountServiceApplicationTests {
 		assertThat(accountResources.stream().map(Account::getId).collect(Collectors.toList())).contains(resourceId);
 	}
 
-	private Account buildAccount(CreateAccountRequest createAccountRequest, Integer resourceId) {
+    @Test
+    public void shouldDeleteAnAccount(){
+        Account account = account();
+        givenAccountExists(account);
+
+        ResponseEntity<Void> response = testRestTemplate.exchange("/accounts/" + account.getId(), HttpMethod.DELETE, null, Void.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    }
+
+    private Account buildAccount(CreateAccountRequest createAccountRequest, Integer resourceId) {
 		return Account.builder()
 				.id(resourceId)
 				.firstName(createAccountRequest.getFirstName())

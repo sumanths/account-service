@@ -28,4 +28,9 @@ public class AccountServiceImpl implements AccountService {
     public Account createAccount(Account account) {
         return accountRepository.save(account);
     }
+
+    @Override
+    public void deleteAccount(Integer accountId) {
+        accountRepository.deleteById(accountId);
+    }
 }

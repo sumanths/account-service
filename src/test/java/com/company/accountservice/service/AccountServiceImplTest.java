@@ -13,8 +13,10 @@ import java.util.List;
 
 import static com.company.accountservice.builders.AccountBuilder.account;
 import static com.company.accountservice.builders.AccountBuilder.accountWithoutId;
+import static com.company.accountservice.utils.IntegerUtils.randomInteger;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AccountServiceImplTest {
@@ -51,5 +53,14 @@ public class AccountServiceImplTest {
         Account createdAccount = accountService.createAccount(account);
 
         assertThat(createdAccount).isEqualTo(accountWithId);
+    }
+
+    @Test
+    public void shouldDeleteAnAccount(){
+        Integer accountId = randomInteger();
+
+        accountService.deleteAccount(accountId);
+
+        verify(accountRepository).deleteById(accountId);
     }
 }
