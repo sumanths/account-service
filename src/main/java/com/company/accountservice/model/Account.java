@@ -3,6 +3,7 @@ package com.company.accountservice.model;
 import lombok.*;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Builder
@@ -16,6 +17,7 @@ import javax.persistence.Id;
 public class Account {
 
     @Id
+    @GeneratedValue
     private Integer id;
 
     private String firstName;

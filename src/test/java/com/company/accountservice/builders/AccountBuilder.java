@@ -15,4 +15,13 @@ public class AccountBuilder {
                 .accountNumber(randomString())
                 .build();
     }
+
+    public static Account accountWithoutId() {
+        return Account.builder()
+                .id(randomInteger())
+                .firstName(randomString())
+                .secondName(randomString())
+                .accountNumber(randomString())
+                .build();
+    }
 }

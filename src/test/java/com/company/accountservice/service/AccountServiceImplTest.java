@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.company.accountservice.builders.AccountBuilder.account;
+import static com.company.accountservice.builders.AccountBuilder.accountWithoutId;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
@@ -38,5 +39,17 @@ public class AccountServiceImplTest {
         List<Account> accountsList = accountService.getAccounts();
 
         assertThat(accountsList).isEqualTo(accounts);
+    }
+
+    @Test
+    public void shouldCreateANewAccount(){
+        Account account = accountWithoutId();
+        Account accountWithId = account();
+
+        given(accountRepository.save(account)).willReturn(accountWithId);
+
+        Account createdAccount = accountService.createAccount(account);
+
+        assertThat(createdAccount).isEqualTo(accountWithId);
     }
 }
