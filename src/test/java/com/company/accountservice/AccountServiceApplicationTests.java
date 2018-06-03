@@ -90,12 +90,18 @@ public class AccountServiceApplicationTests {
 
     @Test
     public void shouldDeleteAnAccount(){
-        Account account = account();
-        givenAccountExists(account);
+        Account account1 = account();
+        Account account2 = account();
+        Account account3 = account();
+        givenAccountExists(account1, account2, account3);
 
-        ResponseEntity<Void> response = testRestTemplate.exchange("/accounts/" + account.getId(), HttpMethod.DELETE, null, Void.class);
+        ResponseEntity<Void> response = testRestTemplate.exchange("/accounts/" + account1.getId(), HttpMethod.DELETE, null, Void.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        ResponseEntity<List<Account>> allAccounts = testRestTemplate.exchange("/accounts", HttpMethod.GET, null, new ParameterizedTypeReference<List<Account>>() {});
+
+        assertThat(allAccounts.getBody()).containsOnly(account2, account3);
     }
 
     private Account buildAccount(CreateAccountRequest createAccountRequest, Integer resourceId) {
