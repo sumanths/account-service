@@ -19,6 +19,7 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.company.accountservice.builders.AccountBuilder.account;
 import static com.company.accountservice.utils.StringUtils.randomString;
@@ -80,6 +81,11 @@ public class AccountServiceApplicationTests {
 		Integer resourceId = Integer.parseInt(createdResourceId);
 
 		assertThat(response.getBody()).isEqualTo(buildAccount(request, resourceId));
+
+		ResponseEntity<List<Account>> allAccounts = testRestTemplate.exchange("/accounts", HttpMethod.GET, null, new ParameterizedTypeReference<List<Account>>() {});
+		List<Account> accountResources = allAccounts.getBody();
+
+		assertThat(accountResources.stream().map(Account::getId).collect(Collectors.toList())).contains(resourceId);
 	}
 
 	private Account buildAccount(CreateAccountRequest createAccountRequest, Integer resourceId) {
