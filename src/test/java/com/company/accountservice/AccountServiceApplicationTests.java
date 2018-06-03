@@ -10,10 +10,13 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Arrays;
 import java.util.List;
 
+import static com.company.accountservice.builders.AccountBuilder.account;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
@@ -24,12 +27,38 @@ public class AccountServiceApplicationTests {
 	@Autowired
 	private TestRestTemplate testRestTemplate;
 
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+
 	@Test
 	public void shouldFetchZeroAccountsWhenThereAreNone() {
 		ResponseEntity<List<Account>> accountsResponse = testRestTemplate.exchange("/accounts", HttpMethod.GET, null, new ParameterizedTypeReference<List<Account>>() {});
 
 		assertThat(accountsResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(accountsResponse.getBody()).isEmpty();
+	}
+
+	@Test
+	public void shouldFetchExistingAccounts(){
+		Account account1 = account();
+		Account account2 = account();
+		Account account3 = account();
+		givenAccountExists(account1, account2, account3);
+
+		ResponseEntity<List<Account>> accountsResponse = testRestTemplate.exchange("/accounts", HttpMethod.GET, null, new ParameterizedTypeReference<List<Account>>() {});
+
+		assertThat(accountsResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+		List<Account> accountResources = accountsResponse.getBody();
+		assertThat(accountResources).containsOnly(account1, account2, account3);
+	}
+
+	private void givenAccountExists(Account... accounts) {
+		Arrays.stream(accounts).forEach(account -> jdbcTemplate.update("insert into account(id, first_name, second_name, account_number) values (?,?,?,?)",
+				account.getId(),
+				account.getFirstName(),
+				account.getSecondName(),
+				account.getAccountNumber()));
+
 	}
 
 }
